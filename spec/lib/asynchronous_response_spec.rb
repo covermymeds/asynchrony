@@ -9,6 +9,23 @@ shared_examples 'it can POST to/GET from Mock EHR' do
     stub_request(:get, url.results).to_return(status: 200, body: result)
   end
 
+  describe '.get' do
+    it 'is the content from the url' do
+      # Asynchrony.get(url)
+    end
+
+    context 'when only errors are received' do
+      it 'raises an exception'
+    end
+  end
+
+  describe '.watch' do
+    it 'is a new Poller for the url' do
+      # poller = Asynchrony.watch(url)
+      # poller.get / poller.result
+    end
+  end
+
   describe 'necessary values' do
     before do
       allow(subject).to receive(:post)
