@@ -34,7 +34,7 @@ module Asynchrony
       let(:error_codes) { subject.instance_variable_get(:@rescuable_errors) }
 
       it 'is all of them by default' do
-        expect(error_codes).to eq SpecificErrors::ALL_ERROR_CODES
+        expect(error_codes).to eq SpecificErrors::ALL_ERROR_CODES.to_a
       end
 
       it 'is customizable' do

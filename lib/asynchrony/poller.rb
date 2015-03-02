@@ -1,18 +1,24 @@
+require 'asynchrony/specific_errors'
+
 module Asynchrony
   class Poller
+    include SpecificErrors
+
     attr_accessor :retries, :min_wait_time, :max_wait_time
 
     def initialize(url)
       @url = url
       @retries = DEFAULT_RETRIES
-      @min_wait_time = DEFAULT_WAIT_TIME
-      @max_wait_time = @min_wait_time * @retries
+      @wait_time = DEFAULT_WAIT_TIME
+      @max_wait_time = 2 ** @retries
+      super()
     end
 
     def result
       with_retries(retry_criteria) do |_attempt|
         @sync_response = Faraday.get(@url)
         verify_success
+        break if do_not_rescue?
       end
     end
     alias_method :get, :result
@@ -26,13 +32,12 @@ module Asynchrony
     end
 
     def contact_successful?
-      @sync_response.status < 300
+      status < 300
     end
 
     def raise_http_error
-      message = "#{@sync_response.status} error communicating with #{@url}:
-      #{@sync_response.body}"
-      fail HTTPError, message
+      do_not_rescue! unless rescue_this_error?
+      raise HTTPError, error_message
     end
 
     def retry_criteria
@@ -40,8 +45,13 @@ module Asynchrony
         max_tries: @retries,
         base_sleep_seconds: @wait_time,
         max_sleep_seconds: @max_wait_time,
-        rescue: HTTPError
+      rescue: HTTPError
       }
+    end
+
+    def error_message
+      "#{status} error receiving data from #{@url}:
+      #{@sync_response.body}"
     end
   end
 end
