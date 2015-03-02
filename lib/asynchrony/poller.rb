@@ -17,8 +17,7 @@ module Asynchrony
     def result
       with_retries(retry_criteria) do |_attempt|
         @sync_response = Faraday.get(@url)
-        verify_success
-        break if do_not_rescue?
+        verify_success    # returns sync_response
       end
     end
     alias_method :get, :result
@@ -36,8 +35,11 @@ module Asynchrony
     end
 
     def raise_http_error
-      do_not_rescue! unless rescue_this_error?
-      raise HTTPError, error_message
+      if rescue_this_error?
+        raise HTTPError, error_message
+      else
+        fail error_message
+      end
     end
 
     def retry_criteria
@@ -45,7 +47,7 @@ module Asynchrony
         max_tries: @retries,
         base_sleep_seconds: @wait_time,
         max_sleep_seconds: @max_wait_time,
-      rescue: HTTPError
+        rescue: HTTPError
       }
     end
 

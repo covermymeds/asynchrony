@@ -80,16 +80,17 @@ module Asynchrony
 
         context 'when an error code is encountered that is not meant to be rescued' do
           before(:each) do
-            subject.rescuable_errors = 500
+            subject.rescue 500
           end
 
           it 'stops retrying' do
+            allow(subject).to receive(:raise_http_error)
             expect(Faraday).to receive(:get).with(url).once.and_call_original
             subject.get
           end
 
           it 'errors because it was unsuccessful' do
-            expect { subject.get }.to raise_exception RuntimeError #Asynchrony::HTTPError
+            expect { subject.get }.to raise_exception RuntimeError
           end
         end
       end
