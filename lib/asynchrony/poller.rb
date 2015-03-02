@@ -32,7 +32,7 @@ module Asynchrony
     def raise_http_error
       message = "#{@sync_response.status} error communicating with #{@url}:
       #{@sync_response.body}"
-      raise HTTPError, message
+      fail HTTPError, message
     end
 
     def retry_criteria
