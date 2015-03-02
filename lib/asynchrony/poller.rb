@@ -1,12 +1,12 @@
 module Asynchrony
   class Poller
-    attr_accessor :retries, :wait_time, :max_wait_time
+    attr_accessor :retries, :min_wait_time, :max_wait_time
 
     def initialize(url)
       @url = url
       @retries = DEFAULT_RETRIES
-      @wait_time = DEFAULT_WAIT_TIME
-      @max_wait_time = 2 ** @retries
+      @min_wait_time = DEFAULT_WAIT_TIME
+      @max_wait_time = @min_wait_time * @retries
     end
 
     def result
