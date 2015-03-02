@@ -1,0 +1,48 @@
+require: rubocop-rspec
+
+AllCops:
+  Include:
+    - Gemfile
+    - Rakefile
+
+Style/Documentation:
+  Enabled: false
+
+RegexpLiteral:
+  MaxSlashes: 0
+
+TrailingComma:
+  EnforcedStyleForMultiline: comma
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/ClassAndModuleCamelCase:
+  Enabled: true
+
+Style/SingleSpaceBeforeFirstArg:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 7
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+
+RSpec/DescribeClass:
+  Enabled: false

@@ -90,7 +90,7 @@ module Asynchrony
           end
 
           it 'errors because it was unsuccessful' do
-            expect { subject.get }.to raise_exception RuntimeError
+            expect { subject.get }.to raise_exception(/\d{3} error receiving data/)
           end
         end
       end

@@ -10,7 +10,7 @@ module Asynchrony
       @url = url
       @retries = DEFAULT_RETRIES
       @wait_time = DEFAULT_WAIT_TIME
-      @max_wait_time = 2 ** @retries
+      @max_wait_time = 2**@retries
       super()
     end
 
@@ -36,7 +36,7 @@ module Asynchrony
 
     def raise_http_error
       if rescue_this_error?
-        raise HTTPError, error_message
+        fail HTTPError, error_message
       else
         fail error_message
       end
@@ -47,7 +47,7 @@ module Asynchrony
         max_tries: @retries,
         base_sleep_seconds: @wait_time,
         max_sleep_seconds: @max_wait_time,
-        rescue: HTTPError
+        rescue: HTTPError,
       }
     end
 
