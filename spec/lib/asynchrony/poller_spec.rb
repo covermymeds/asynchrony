@@ -2,33 +2,66 @@ require 'spec_helper'
 
 module Asynchrony
   RSpec.describe Poller do
-
-  let(:result) { XmlGenerator.test_xml('InitiationResponse') }
-
-  before do
-    stub_request(:get, url).to_return(status: 200, body: result)
-  end
-
-  describe '#result' do
-    context 'when the response is (eventually) valid' do
-      it 'is the content of the successful response' do
-        expect { send_request }.not_to raise_exception
-      end
+    subject { described_class.new(url) }
+    let(:url)    { "http://#{junk}.com" }
+    let(:result) { XmlGenerator.test_xml('InitiationResponse') }
+    let(:success) do
+      { status: 200, body: result }
+    end
+    let(:failure) do
+      { status: 404, body: 'message not found' }
     end
 
-    context 'when the response is not valid (after running out of retries)' do
-      before(:each) do
-        Asynchrony::NUMBER_OF_RETRIES = 0
-        stub_request(:get, url).to_return(status: 404, body: 'message not found')
+    it 'has a customizable number of retries' do
+      retries = junk(1)
+      subject.retries = retries
+      expect(subject.retries).to eq(retries)
+    end
+
+    it 'has a customizable minimum wait time' do
+      wait_time = junk(1)
+      subject.min_wait_time = wait_time
+      expect(subject.min_wait_time).to eq(wait_time)
+    end
+
+    it 'has a customizable maximum wait time' do
+      wait_time = junk(2)
+      subject.max_wait_time = wait_time
+      expect(subject.max_wait_time).to eq(wait_time)
+    end
+
+    describe '#result (or #get)' do
+      context 'when the response is valid' do
+        before do
+          stub_request(:get, url).to_return(success)
+        end
+
+        it 'is the content of the successful response' do
+          expect(subject.get).to eq(result)
+        end
       end
 
-      it 'errors because it was unsuccessful' do
-        expect { send_request }.to raise_exception Asynchrony::HTTPError
+      context 'when the response is an HTTP error' do
+        before do
+          subject.min_wait_time = 0
+          stub_request(:get, url).to_return(failure, success)
+        end
+
+        it 'retries until it is successful' do
+          expect(subject.result).to eq(result)
+        end
+      end
+
+      context 'when the response is not valid (after running out of retries)' do
+        before(:each) do
+          subject.number_of_retries = 0
+          stub_request(:get, url).to_return(failure)
+        end
+
+        it 'errors because it was unsuccessful' do
+          expect { subject.result }.to raise_exception Asynchrony::HTTPError
+        end
       end
     end
   end
-end
-
-def send_request
-  subject.send :send_request   # stupid private method calls in rspec...
 end

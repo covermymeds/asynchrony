@@ -1,7 +1,7 @@
 require 'faraday'
 require 'retries'
 
-class Asynchrony
+module Asynchrony
   class HTTPError < StandardError; end
 
   DEFAULT_RETRIES = 10
@@ -20,4 +20,4 @@ class Asynchrony
   end
 end
 
-require 'asynchony/poller'
+require 'asynchrony/poller'

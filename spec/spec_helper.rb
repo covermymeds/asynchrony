@@ -1,6 +1,7 @@
 require 'rspec'
 require 'junklet'
-require 'cover_my_epa'
+require 'xml_generator'
+require 'asynchrony'
 
 Dir[CoverMyEpa.root.join('spec/support/**/*.rb')].each { |file| require file }
 
