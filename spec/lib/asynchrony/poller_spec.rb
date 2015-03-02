@@ -37,7 +37,7 @@ module Asynchrony
         end
 
         it 'is the content of the successful response' do
-          expect(subject.get).to eq(result)
+          expect(subject.result.body).to eq(result)
         end
       end
 
@@ -48,18 +48,18 @@ module Asynchrony
         end
 
         it 'retries until it is successful' do
-          expect(subject.result).to eq(result)
+          expect(subject.result.body).to eq(result)
         end
       end
 
       context 'when the response is not valid (after running out of retries)' do
         before(:each) do
-          subject.number_of_retries = 0
+          subject.retries = 1
           stub_request(:get, url).to_return(failure)
         end
 
         it 'errors because it was unsuccessful' do
-          expect { subject.result }.to raise_exception Asynchrony::HTTPError
+          expect { subject.get }.to raise_exception Asynchrony::HTTPError
         end
       end
     end
