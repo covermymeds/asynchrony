@@ -3,7 +3,7 @@ require 'junklet'
 require 'xml_generator'
 require 'asynchrony'
 
-Dir[CoverMyEpa.root.join('spec/support/**/*.rb')].each { |file| require file }
+Dir[Asynchrony.root.join('spec/support/**/*.rb')].each { |file| require file }
 
 RSpec.configure do |config|
   config.color = :enabled
