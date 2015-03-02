@@ -1,33 +1,23 @@
 module Asynchrony
   class Poller
-    attr_accessor :retries, :wait_time
+    attr_accessor :retries, :wait_time, :max_wait_time
 
     def initialize(url)
       @url = url
-      @attempts = 0
       @retries = DEFAULT_RETRIES
       @wait_time = DEFAULT_WAIT_TIME
+      @max_wait_time = 2 ** @retries
     end
 
     def result
-      begin
-        sleep calculated_wait_time
+      with_retries(retry_criteria) do |_attempt|
         @sync_response = Faraday.get(@url)
-        increase_count
-      end until contact_successful? || out_of_tries?
-      verify_success
+        verify_success
+      end
     end
     alias_method :get, :result
 
     private
-
-    def increase_count
-      @attempts += 1
-    end
-
-    def out_of_tries?
-      @attempts >= @retries
-    end
 
     def verify_success
       @sync_response.tap do
@@ -45,8 +35,13 @@ module Asynchrony
       raise HTTPError, message
     end
 
-    def calculated_wait_time
-      @wait_time.call
+    def retry_criteria
+      {
+        max_tries: @retries,
+        base_sleep_seconds: @wait_time,
+        max_sleep_seconds: @max_wait_time,
+        rescue: HTTPError
+      }
     end
   end
 end

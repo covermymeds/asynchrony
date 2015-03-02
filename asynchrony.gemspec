@@ -33,4 +33,5 @@ EOS
   s.add_development_dependency 'xml_generator'
 
   s.add_runtime_dependency 'faraday'
+  s.add_runtime_dependency 'retries'
 end

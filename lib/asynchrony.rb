@@ -1,10 +1,11 @@
 require 'faraday'
+require 'retries'
 
 class Asynchrony
   class HTTPError < StandardError; end
 
   DEFAULT_RETRIES = 10
-  DEFAULT_WAIT_TIME = -> { 2 ** @attempts }
+  DEFAULT_WAIT_TIME = 1  # seconds;
 
   # if you just want to try once, this will work
   def self.get(url)
