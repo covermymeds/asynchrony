@@ -22,8 +22,10 @@ will throw an error.
 EOS
   s.authors     = ['Kelli Searfos']
   s.email       = 'ksearfos@covermymeds.com'
-  s.files       = ['lib/asynchrony.rb']
   s.homepage    = 'https://git.innova-partners.com/cover_my_meds/asynchrony'
+
+  s.files         = `git ls-files -z`.split("\x0")
+  s.require_path  = 'lib'
 
   s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'geminabox', '~> 0.12.0'
