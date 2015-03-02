@@ -4,9 +4,9 @@ module Asynchrony
 
     def initialize(url)
       @url = url
-      @attempt = 1
+      @attempts = 0
       @retries = DEFAULT_RETRIES
-      @wait_time = -> { DEFAULT_WAIT_TIME ** @attempt }
+      @wait_time = DEFAULT_WAIT_TIME
     end
 
     def result
@@ -22,11 +22,11 @@ module Asynchrony
     private
 
     def increase_count
-      @attempt += 1
+      @attempts += 1
     end
 
     def out_of_tries?
-      @attempt >= @retries
+      @attempts >= @retries
     end
 
     def verify_success

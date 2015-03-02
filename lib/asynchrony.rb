@@ -4,7 +4,7 @@ class Asynchrony
   class HTTPError < StandardError; end
 
   DEFAULT_RETRIES = 10
-  DEFAULT_WAIT_TIME = 1 #seconds
+  DEFAULT_WAIT_TIME = -> { 2 ** @attempts }
 
   # if you just want to try once, this will work
   def self.get(url)
