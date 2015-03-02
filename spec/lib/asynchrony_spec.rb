@@ -1,20 +1,24 @@
 require 'spec_helper'
 
 RSpec.describe Asynchrony do
-  describe '.get' do
-    it 'is the content from the url' do
-      # Asynchrony.get(url)
-    end
+  subject { described_class }
+  let(:url)    { "http://#{junk}.com" }
+  let(:poller) { described_class::Poller }
 
-    context 'when only errors are received' do
-      it 'raises an exception'
+  before do
+    stub_request(:get, url).to_return(status: 010, body: junk)
+  end
+
+  describe '.get' do
+    it 'is the result of polling the given url' do
+      expect_any_instance_of(poller).to receive(:result)
+      subject.get(url)
     end
   end
 
   describe '.watch' do
-    it 'is a new Poller for the url' do
-      # poller = Asynchrony.watch(url)
-      # poller.get / poller.result
+    it 'is a new Poller for that url' do
+      expect(subject.watch(url)).to be_a poller
     end
   end
 end

@@ -41,7 +41,7 @@ module Asynchrony
         end
       end
 
-      context 'when the response is an HTTP error' do
+      context 'when the response has an HTTP error code' do
         before do
           subject.min_wait_time = 0
           stub_request(:get, url).to_return(failure, success)
@@ -50,16 +50,16 @@ module Asynchrony
         it 'retries until it is successful' do
           expect(subject.result.body).to eq(result)
         end
-      end
 
-      context 'when the response is not valid (after running out of retries)' do
-        before(:each) do
-          subject.retries = 1
-          stub_request(:get, url).to_return(failure)
-        end
+        context 'when it runs out of retries' do
+          before(:each) do
+            subject.retries = 1
+            stub_request(:get, url).to_return(failure)
+          end
 
-        it 'errors because it was unsuccessful' do
-          expect { subject.get }.to raise_exception Asynchrony::HTTPError
+          it 'errors because it was unsuccessful' do
+            expect { subject.get }.to raise_exception Asynchrony::HTTPError
+          end
         end
       end
     end
