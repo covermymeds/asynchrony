@@ -9,7 +9,7 @@ module Asynchrony
     def initialize(url)
       @url = url
       @retries = DEFAULT_RETRIES
-      @wait_time = DEFAULT_WAIT_TIME
+      @min_wait_time = DEFAULT_WAIT_TIME
       @max_wait_time = 2**@retries
       super()
     end
@@ -45,7 +45,7 @@ module Asynchrony
     def retry_criteria
       {
         max_tries: @retries,
-        base_sleep_seconds: @wait_time,
+        base_sleep_seconds: @min_wait_time,
         max_sleep_seconds: @max_wait_time,
         rescue: HTTPError,
       }
